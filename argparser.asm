@@ -6,51 +6,14 @@ section .text
 extern strlen
 extern strcmp
 
-; print_help()
-print_help:
-global print_help:function
-
-  push rbp
-  mov rbp, rsp
-
-  call strlen
-  
-  mov rdx, rax
-  mov rsi, rdi
-  mov rax, SYSCALL_WRITE
-  mov rdi, STDOUT
-  syscall
-
-  pop rbp
-  ret
-
-.strcmp_loop:
-  mov r9b, [rdi + r8]
-  mov r10b, [rsi +r8]
-
-  ; increase counter
-  add r8, 1
-  ; check if the characters are equal
-  cmp r9b, r10b
-  jne .strcmp_end
-
-  ; check if the characters are null
-  cmp r9b, 0
-  je .strcmp_match
-
-  ; otherwise, continue looping
-  jmp .strcmp_loop  
-
-.strcmp_match:
-  ; at this point the strings are equal
-  xor rax, rax
-
-.strcmp_end:
-
-  pop rbp
-  ret
-
-; argparse(argc, argv, commands, commands_help)
+;;
+; Parse arguments, if it does not match exits.
+; @param RDI - argc
+; @param RDI - argv
+; @param RDX - commands
+; @param RCX - commands_help
+; @return RAX - pointer to the command struct
+;;
 argparse:
 global argparse:function
 
@@ -87,10 +50,18 @@ global argparse:function
 
   ; if no arguments are given, print help message and exit
 .argparse_help:
-  ; by default returning null
-  xor rax, rax
+
   mov rdi, rcx
-  call print_help
+  call strlen
+
+  mov rdx, rax
+  mov rsi, rcx
+  mov rax, SYSCALL_WRITE
+  mov rdi, STDOUT
+  syscall
+
   
+  xor rax, rax
+
   pop rbp
   ret
