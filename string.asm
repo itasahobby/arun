@@ -1,33 +1,53 @@
 
 section .text
 
+;;
+; Calculate the length of a null terminated string in bytes.
+; @param RDI - address of string
+; @return RAX - number of bytes in string
+;;
 strlen:
 global strlen:function
-    ; Get length of string in rax
-    push rcx
-    mov rcx, -1
-.loop:
-    inc rcx
-    cmp byte [rdi+rcx], 0
-    jne .loop
-    mov rax, rcx
-    pop rcx
+
+    mov rax, -1
+.strlen_loop:
+    inc rax
+    cmp byte [rdi+rax], 0
+    jne .strlen_loop
     ret
 
-; strcmp(s1, s2)
-; compares two strings and returns 0 if they are equal, -1 if they are not equal
-; they must be null-terminated
+
+;;
+; Compare two null terminated strings.
+; @param RDI - address of first string
+; @param RDI - address of first string
+; @return RAX - if both strings are the same return 0, otherwise returns -1
+;;
 strcmp:
 global strcmp:function
 
-  push rbp
-  mov rbp, rsp
-
   mov rax, -1
 
-  ; store the counter in r8
+  ; initialize the counter
   xor r8, r8
-  ; store in r9 the first string
-  xor r9, r9
-  ; store in r10 the second string
-  xor r10, r10
+
+.strcmp_loop:
+  mov r9b, [rdi + r8]
+  mov r10b, [rsi +r8]
+
+  inc r8
+
+  cmp r9b, r10b
+  jne .strcmp_end
+
+  ; if they are null and last character was equal, then they are equal
+  cmp r9b, 0
+  je .strcmp_match
+
+  jmp .strcmp_loop  
+
+.strcmp_match:
+  xor rax, rax
+
+.strcmp_end:
+  ret
