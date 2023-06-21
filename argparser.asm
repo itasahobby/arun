@@ -1,10 +1,8 @@
-%define SYSCALL_WRITE 1
-%define STDOUT 1
+%include "argparser.inc"
+%include "linux.inc"
+%include "string.inc"
 
 section .text
-
-extern strlen
-extern strcmp
 
 ;;
 ; Parse arguments, if it does not match exits.
@@ -37,7 +35,7 @@ global argparse:function
   cmp r11, 0
   je .argparse_help
 
-  lea rdi, [rdx + 4]
+  mov rdi, [rdx + command.name]
   mov rsi, r10
 .argparse_loop:
   call strcmp

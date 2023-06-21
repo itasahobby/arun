@@ -1,0 +1,2 @@
+extern strlen
+extern strcmp

@@ -1,4 +1,5 @@
-%define SYSCALL_EXIT 60
+%include "argparser.inc"
+%include "linux.inc"
 
 section .data
   help_message:
@@ -12,29 +13,40 @@ section .data
 
   help_message_len equ $ - help_message - 1
 
-  commands:
-    ; create <id> <bundle_path>
-    dd 2
-    db "create", 0
-    ; start <id>
-    dd 1
-    db "start", 0
-    ; state <id>
-    dd 1
-    db "state", 0
-    ; kill <id> <signal>
-    dd 2
-    db "kill", 0
-    ; delete <id>
-    dd 1
-    db "delete", 0
-  
-  commands_len equ $ - commands
+  command_names:
+    .create: db "create", 0
+    .start:  db "start", 0
+    .state:  db "state", 0
+    .kill:   db "kill", 0
+    .delete: db "delete", 0
+
+  commands_struct:
+    istruc command
+      at command.arg_count, dd  2
+      at command.name,      dq  command_names.create
+    iend
+
+    ; istruct command
+    ;   at command.arg_count, dd  1
+    ;   at command.name,      dq  command_names.start
+    ; iend
+    
+    ; istruct command
+    ;   at command.arg_count, dd  1
+    ;   at command.name,      dq  command_names.state
+    ; iend
+    
+    ; istruct command
+    ;   at command.arg_count, dd  2
+    ;   at command.name,      dq  command_names.kill
+    ; iend
+    
+    ; istruct command
+    ;   at command.arg_count, dd  1
+    ;   at command.name,      dq  command_names.delete
+    ; iend
 
 section .text
-
-extern argparse
-extern print_hello
 
 _start:
 global _start:function
@@ -44,7 +56,7 @@ global _start:function
   ; store argv in rsi (8 bytes aligned)
   lea rsi, [rsp + 8]
   ; send commands struct to rdx
-  lea rdx, [commands]
+  lea rdx, [commands_struct]
   ; send help message to r8
   lea rcx, [help_message]
   call argparse
