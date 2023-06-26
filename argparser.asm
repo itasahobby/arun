@@ -18,10 +18,10 @@ global argparse:function
   push rbp
   mov rbp, rsp
 
-  ; store the pointer of argv[1] in r10
+  ; store subcomand
   mov r10, [rsi + 8]
   
-  ; check if argc is 1 (no arguments given)
+  ; check if no were arguments given
   cmp dword byte [rdi], 1
   je .argparse_help
 
@@ -31,7 +31,7 @@ global argparse:function
   mov r11, [rdx]
   ; comparing the number of arguments expected with the number of arguments given
 
-  ; Check if there is no more commands
+  ; Check if there are no more commands
   cmp r11, 0
   je .argparse_help
 
@@ -41,10 +41,8 @@ global argparse:function
   call strcmp
 
   cmp rax, 0
-  je .argparse_execute_command
-
-.argparse_execute_command:
-
+  mov rax, rdx
+  je .argparse_end
 
   ; if no arguments are given, print help message and exit
 .argparse_help:
@@ -58,8 +56,9 @@ global argparse:function
   mov rdi, STDOUT
   syscall
 
-  
   xor rax, rax
+
+.argparse_end:
 
   pop rbp
   ret

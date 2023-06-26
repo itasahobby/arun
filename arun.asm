@@ -1,5 +1,6 @@
 %include "argparser.inc"
 %include "linux.inc"
+%include "runtime.inc"
 
 section .data
   help_message:
@@ -24,6 +25,7 @@ section .data
     istruc command
       at command.arg_count, dd  2
       at command.name,      dq  command_names.create
+      at command.fn,        dq  create
     iend
 
     ; istruct command
