@@ -28,25 +28,25 @@ section .data
       at command.fn,        dq  create
     iend
 
-    ; istruct command
-    ;   at command.arg_count, dd  1
-    ;   at command.name,      dq  command_names.start
-    ; iend
+    istruc command
+      at command.arg_count, dd  1
+      at command.name,      dq  command_names.start
+    iend
     
-    ; istruct command
-    ;   at command.arg_count, dd  1
-    ;   at command.name,      dq  command_names.state
-    ; iend
+    istruc command
+      at command.arg_count, dd  1
+      at command.name,      dq  command_names.state
+    iend
     
-    ; istruct command
-    ;   at command.arg_count, dd  2
-    ;   at command.name,      dq  command_names.kill
-    ; iend
+    istruc command
+      at command.arg_count, dd  2
+      at command.name,      dq  command_names.kill
+    iend
     
-    ; istruct command
-    ;   at command.arg_count, dd  1
-    ;   at command.name,      dq  command_names.delete
-    ; iend
+    istruc command
+      at command.arg_count, dd  1
+      at command.name,      dq  command_names.delete
+    iend
 
 section .text
 
