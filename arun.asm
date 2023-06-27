@@ -31,21 +31,25 @@ section .data
     istruc command
       at command.arg_count, dd  1
       at command.name,      dq  command_names.start
+      at command.fn,        dq  start
     iend
     
     istruc command
       at command.arg_count, dd  1
       at command.name,      dq  command_names.state
+      at command.fn,        dq  state
     iend
     
     istruc command
       at command.arg_count, dd  2
       at command.name,      dq  command_names.kill
+      at command.fn,        dq  kill
     iend
     
     istruc command
       at command.arg_count, dd  1
       at command.name,      dq  command_names.delete
+      at command.fn,        dq  delete
     iend
 
 section .text
