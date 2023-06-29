@@ -7,7 +7,7 @@ section .text
 ;;
 ; Parse arguments, if it does not match exits.
 ; @param RDI - argc
-; @param RDI - argv
+; @param RSI - argv
 ; @param RDX - commands
 ; @param RCX - commands_help
 ; @return RAX - pointer to the command struct
@@ -18,31 +18,46 @@ global argparse:function
   push rbp
   mov rbp, rsp
 
+  ; check if no were arguments given
+  cmp rdi, 1
+  je .argparse_help
+
+  ; store only parameters in argc
+  sub rdi, 2
+
   ; store subcomand
   mov r10, [rsi + 8]
   
-  ; check if no were arguments given
-  cmp dword byte [rdi], 1
-  je .argparse_help
+.argparse_loop:
 
-  ; comparing argv[1] to check that the number of arguments are correct
-  
-  ; getting first command from data section
   mov r11, [rdx]
-  ; comparing the number of arguments expected with the number of arguments given
 
-  ; Check if there are no more commands
+  ; commands should be null byte terminated, therefore this checks if the end of 
+  ; the list was reached
   cmp r11, 0
   je .argparse_help
-
+ 
+  push rdi
+  push rsi
+  
   mov rdi, [rdx + command.name]
   mov rsi, r10
-.argparse_loop:
   call strcmp
+  
+  pop rsi
+  pop rdi
+
+  add rdx, command_size
 
   cmp rax, 0
-  mov rax, rdx
-  je .argparse_end
+  jne .argparse_loop
+
+  cmp rdi, [rdx + command.arg_count - command_size]
+  jne .argparse_help
+
+.argparse_fn_callback:
+
+  jmp .argparse_end
 
   ; if no arguments are given, print help message and exit
 .argparse_help:
